@@ -1,5 +1,7 @@
 # Car Atlas Pro
 
+**Live demo:** https://car-atlas-pro.vercel.app
+
 A modern **Vite + React 19 + TypeScript** car catalog UI. It is built for a make → model → generation → variant database, with specs, dimensions, options, known strengths, buyer warnings, collections and comparison.
 
 ## What is included
