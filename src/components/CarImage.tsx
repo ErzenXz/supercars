@@ -1,0 +1,38 @@
+import { useState } from 'react';
+import { carImages } from '../data/carImages';
+import { CarSilhouette } from './CarSilhouette';
+import type { Gradient } from '../lib/theme';
+
+interface CarImageProps {
+  makeId: string;
+  modelId: string;
+  label: string;
+  body: string;
+  colors: Gradient;
+  accent: string;
+  className?: string;
+}
+
+/**
+ * Shows a real model photo (Wikimedia Commons) when available, falling back to
+ * the procedural SVG silhouette if the model has no image or the photo fails.
+ */
+export function CarImage({ makeId, modelId, label, body, colors, accent, className }: CarImageProps) {
+  const [errored, setErrored] = useState(false);
+  const url = carImages[`${makeId}/${modelId}`];
+
+  if (!url || errored) {
+    return <CarSilhouette body={body} colors={colors} accent={accent} className={className} />;
+  }
+
+  return (
+    <img
+      className="car-photo"
+      src={url}
+      alt={label}
+      loading="lazy"
+      decoding="async"
+      onError={() => setErrored(true)}
+    />
+  );
+}
