@@ -2,18 +2,16 @@
 
 **Live demo:** https://car-atlas-pro.vercel.app
 
-A modern **Vite + React 19 + TypeScript** car catalog UI. It is built for a make → model → generation → variant database, with specs, dimensions, options, known strengths, buyer warnings, collections and comparison.
+A clean, **minimalist** Vite + React 19 + TypeScript car catalog. Built on a make → model → generation → variant database, with specs, dimensions, options, known strengths, buyer warnings and comparison.
 
 ## What is included
 
 - **21 makes, 130+ versions** spanning diesel, petrol, hybrid, plug-in hybrid and electric
-- Modern responsive UI with a glass/dark premium design
-- **Procedural SVG car illustrations** — a distinct silhouette per body style (hatchback, sedan, wagon, SUV, coupe, MPV…), tinted by brand color and fuel
-- Search + quick fuel pills + filters by make, drive, body style and segment
-- **Sorting** (power, price, efficiency, newest) and a **favorites** list saved to `localStorage`
-- Detailed version page with animated performance bars, engine, dimensions, equipment, options and buyer notes
-- **Auto-populating collections** (diesel dailies, big-boot wagons, premium German, hybrids, EVs, fast-but-usable…) defined as predicates, so they stay correct as data grows
-- Side-by-side comparison for up to three versions, with the best value in each row highlighted
+- **Minimal, light, responsive UI** — large real car photos, lots of whitespace, restrained type
+- **Real model photos** from Wikimedia Commons, with a procedural SVG silhouette as fallback
+- **Dedicated car page per version** (lightweight hash routing): click a car → its own page with full specs, dimensions, equipment and buyer notes
+- Search + filters (make, fuel, body, drive) + **sorting** (power, price, efficiency, newest)
+- **Favorites** saved to `localStorage`, and side-by-side **comparison** of up to three versions with the best value in each row highlighted
 - Strong TypeScript schema in `src/types.ts`
 - Modular per-make data files in `src/data/makes/`
 - Public-data importer example for NHTSA vPIC in `scripts/import-vpic.ts`
@@ -80,16 +78,17 @@ The seed data is intentionally editable and structured like a real product datab
 
 ```text
 src/
-  components/         UI components (cards, detail panel, compare, filters, car silhouette…)
+  components/         Header, Toolbar, CarCard, CarPage, Compare, CarImage, CarSilhouette
   data/
     catalog.ts        aggregates the core makes + every modular make file
+    carImages.ts      generated map of model -> Wikimedia photo URL
     _shared.ts        shared option presets (safetyComfort / evComfort)
     makes/*.ts        one CarMake per file
   lib/
-    catalog.ts        search / flatten / sort / spec-range helpers
-    collections.ts    predicate-based collections
+    catalog.ts        search / flatten / sort helpers
     theme.ts          brand colors, fuel colors, body-style inference
     useFavorites.ts   localStorage favorites hook
+    useHashRoute.ts   tiny hash router (home / car / compare / favorites)
   types.ts            core data model
 scripts/
   import-vpic.ts        public API importer example

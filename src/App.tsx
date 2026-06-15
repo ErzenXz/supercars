@@ -1,16 +1,14 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Header } from './components/Header';
-import { Hero } from './components/Hero';
-import { Filters } from './components/Filters';
+import { Toolbar } from './components/Toolbar';
 import { CarCard } from './components/CarCard';
-import { DetailPanel } from './components/DetailPanel';
-import { Collections } from './components/Collections';
+import { CarPage } from './components/CarPage';
 import { Compare } from './components/Compare';
-import { ImportModal } from './components/ImportModal';
 import { allVariants, getVariantById, searchVariants, sortVariants } from './lib/catalog';
 import type { SortKey } from './lib/catalog';
 import { makes } from './data/catalog';
 import { useFavorites } from './lib/useFavorites';
+import { useHashRoute, go, carHref } from './lib/useHashRoute';
 import './styles.css';
 
 const initialFilters = {
@@ -21,147 +19,112 @@ const initialFilters = {
   segment: 'all'
 };
 
-const sortOptions: { value: SortKey; label: string }[] = [
-  { value: 'relevance', label: 'Relevance' },
-  { value: 'power-desc', label: 'Most power' },
-  { value: 'price-asc', label: 'Price: low → high' },
-  { value: 'price-desc', label: 'Price: high → low' },
-  { value: 'efficiency', label: 'Most efficient' },
-  { value: 'year-desc', label: 'Newest' }
-];
-
 export default function App() {
+  const route = useHashRoute();
   const [query, setQuery] = useState('');
   const [filters, setFilters] = useState<Record<string, string>>(initialFilters);
-  const [selectedId, setSelectedId] = useState(allVariants[0]?.variant.id ?? '');
-  const [compareIds, setCompareIds] = useState<string[]>([]);
-  const [importOpen, setImportOpen] = useState(false);
   const [sort, setSort] = useState<SortKey>('relevance');
-  const [favOnly, setFavOnly] = useState(false);
+  const [compareIds, setCompareIds] = useState<string[]>([]);
   const favorites = useFavorites();
 
-  const results = useMemo(() => {
-    const matched = searchVariants(query, filters);
-    const scoped = favOnly ? matched.filter((entry) => favorites.has(entry.variant.id)) : matched;
-    return sortVariants(scoped, sort);
-  }, [query, filters, sort, favOnly, favorites]);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [route]);
 
-  const selected = getVariantById(selectedId) ?? results[0] ?? allVariants[0];
-  const compared = compareIds.map(getVariantById).filter(Boolean) as NonNullable<ReturnType<typeof getVariantById>>[];
+  const baseResults = useMemo(() => sortVariants(searchVariants(query, filters), sort), [query, filters, sort]);
+  const results = useMemo(
+    () => (route.name === 'favorites' ? baseResults.filter((e) => favorites.has(e.variant.id)) : baseResults),
+    [baseResults, route, favorites]
+  );
 
-  const updateFilter = (key: string, value: string) => {
-    setFilters((current) => ({ ...current, [key]: value }));
-  };
+  const compared = compareIds
+    .map(getVariantById)
+    .filter(Boolean) as NonNullable<ReturnType<typeof getVariantById>>[];
+
+  const updateFilter = (key: string, value: string) => setFilters((c) => ({ ...c, [key]: value }));
+  const resetFilters = () => { setQuery(''); setFilters(initialFilters); setSort('relevance'); };
 
   const toggleCompare = (id: string) => {
     setCompareIds((current) => {
-      if (current.includes(id)) return current.filter((existing) => existing !== id);
+      if (current.includes(id)) return current.filter((x) => x !== id);
       if (current.length >= 3) return [...current.slice(1), id];
       return [...current, id];
     });
   };
 
-  const openVariant = (id: string) => {
-    setSelectedId(id);
-    window.location.hash = 'catalog';
-  };
+  const renderList = (isFavorites: boolean) => (
+    <>
+      <div className="container page-head">
+        <h1>{isFavorites ? 'Saved cars' : 'Find your car'}</h1>
+        <p>
+          {isFavorites
+            ? `${results.length} saved version${results.length === 1 ? '' : 's'}.`
+            : `${allVariants.length} versions across ${makes.length} makes — petrol, diesel, hybrid, plug-in and electric.`}
+        </p>
+      </div>
+
+      <Toolbar
+        query={query}
+        filters={filters}
+        sort={sort}
+        onQueryChange={setQuery}
+        onFilterChange={updateFilter}
+        onSortChange={setSort}
+        onReset={resetFilters}
+      />
+
+      <div className="results-meta">{results.length} result{results.length === 1 ? '' : 's'}</div>
+
+      {results.length === 0 ? (
+        <div className="empty">
+          <h3>{isFavorites ? 'Nothing saved yet' : 'No cars match'}</h3>
+          <p>
+            {isFavorites
+              ? 'Tap the heart on any car to save it here.'
+              : 'Try clearing the search or filters.'}
+            {!isFavorites && <> <button className="reset-link" onClick={resetFilters}>Clear filters</button></>}
+          </p>
+        </div>
+      ) : (
+        <div className="grid">
+          {results.map((entry) => (
+            <CarCard
+              key={entry.variant.id}
+              entry={entry}
+              favorite={favorites.has(entry.variant.id)}
+              onOpen={() => go(carHref(entry.variant.id).slice(1))}
+              onFavorite={() => favorites.toggle(entry.variant.id)}
+            />
+          ))}
+        </div>
+      )}
+    </>
+  );
 
   return (
     <>
-      <Header onOpenImport={() => setImportOpen(true)} favoriteCount={favorites.count} />
+      <Header favoriteCount={favorites.count} compareCount={compareIds.length} />
       <main>
-        <Hero />
-
-        <section id="catalog" className="section-pad catalog-section">
-          <div className="section-heading catalog-heading">
-            <span className="eyebrow"><span /> Catalog explorer</span>
-            <h2>Search every make, generation, trim and engine in one place.</h2>
-            <p>
-              {allVariants.length} versions across {makes.length} makes — diesels, petrols, hybrids, plug-ins and EVs. Filter, sort and compare like a real buyer.
-            </p>
-          </div>
-
-          <Filters
-            query={query}
-            filters={filters}
-            onQueryChange={setQuery}
-            onFilterChange={updateFilter}
-            onReset={() => { setQuery(''); setFilters(initialFilters); setFavOnly(false); }}
+        {route.name === 'car' ? (
+          <CarPage
+            entry={getVariantById(route.id)}
+            favorite={favorites.has(route.id)}
+            compared={compareIds.includes(route.id)}
+            onFavorite={() => favorites.toggle(route.id)}
+            onCompare={() => toggleCompare(route.id)}
           />
-
-          <div className="catalog-layout">
-            <div className="results-column">
-              <div className="results-top">
-                <h3>{results.length} matching version{results.length === 1 ? '' : 's'}</h3>
-                <div className="results-controls">
-                  <button
-                    className={`fav-toggle ${favOnly ? 'active' : ''}`}
-                    onClick={() => setFavOnly((v) => !v)}
-                    aria-pressed={favOnly}
-                  >
-                    ♥ Favorites{favorites.count ? ` (${favorites.count})` : ''}
-                  </button>
-                  <label className="sort-control">
-                    <span>Sort</span>
-                    <select value={sort} onChange={(event) => setSort(event.target.value as SortKey)}>
-                      {sortOptions.map((option) => (
-                        <option key={option.value} value={option.value}>{option.label}</option>
-                      ))}
-                    </select>
-                  </label>
-                </div>
-              </div>
-
-              {results.length === 0 ? (
-                <div className="no-results glass">
-                  <span>🚗💨</span>
-                  <h3>No cars match those filters</h3>
-                  <p>Try clearing the search or switching off “Favorites only”.</p>
-                </div>
-              ) : (
-                <div className="cards-grid">
-                  {results.map((entry) => (
-                    <CarCard
-                      key={entry.variant.id}
-                      entry={entry}
-                      selected={selected?.variant.id === entry.variant.id}
-                      compared={compareIds.includes(entry.variant.id)}
-                      favorite={favorites.has(entry.variant.id)}
-                      onSelect={() => setSelectedId(entry.variant.id)}
-                      onCompare={() => toggleCompare(entry.variant.id)}
-                      onFavorite={() => favorites.toggle(entry.variant.id)}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <DetailPanel
-              entry={selected}
-              compared={selected ? compareIds.includes(selected.variant.id) : false}
-              favorite={selected ? favorites.has(selected.variant.id) : false}
-              onCompare={() => selected && toggleCompare(selected.variant.id)}
-              onFavorite={() => selected && favorites.toggle(selected.variant.id)}
-            />
-          </div>
-        </section>
-
-        <Collections onOpenVariant={openVariant} />
-        <Compare entries={compared} onRemove={toggleCompare} />
-
-        <section className="section-pad builder-note">
-          <div className="note-card glass">
-            <span>🧠</span>
-            <div>
-              <h2>Built for a real car-data business.</h2>
-              <p>
-                Add auth, user garages, VIN history, dealer listings, price tracking, parts catalogs and admin import tools on top of this base. The important part is the schema: make → model → generation → variant → specs/options/issues.
-              </p>
-            </div>
-          </div>
-        </section>
+        ) : route.name === 'compare' ? (
+          <Compare entries={compared} onRemove={toggleCompare} />
+        ) : (
+          renderList(route.name === 'favorites')
+        )}
       </main>
-      <ImportModal open={importOpen} onClose={() => setImportOpen(false)} />
+      <footer className="foot">
+        <div className="container">
+          <span>Car Atlas Pro · {allVariants.length} versions · {makes.length} makes</span>
+          <span>Photos via Wikimedia Commons · <a href="https://github.com/ErzenXz/supercars">Source</a></span>
+        </div>
+      </footer>
     </>
   );
 }
