@@ -1,5 +1,5 @@
 import { makes } from '../data/catalog';
-import { allVariants } from '../lib/catalog';
+import { countVariantsForMake } from '../lib/catalog';
 import { BrandLogo } from './BrandLogo';
 import { ModelCard } from './ModelCard';
 
@@ -19,7 +19,7 @@ export function MakePage({ makeId }: MakePageProps) {
     );
   }
 
-  const versions = allVariants.filter((e) => e.make.id === makeId).length;
+  const versions = countVariantsForMake(makeId);
 
   return (
     <div className="page-pad">

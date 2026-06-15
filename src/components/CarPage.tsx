@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import type { FlatVariant } from '../lib/catalog';
 import { formatNumber, trimVariantName } from '../lib/catalog';
+import { getCarMedia } from '../lib/media';
 import { makeTheme, fuelColor, primaryBody } from '../lib/theme';
 import { CarImage } from './CarImage';
 
@@ -9,6 +11,53 @@ interface CarPageProps {
   compared: boolean;
   onFavorite: () => void;
   onCompare: () => void;
+}
+
+interface PhotoGalleryProps {
+  makeId: string;
+  modelId: string;
+  label: string;
+  body: string;
+  colors: ReturnType<typeof makeTheme>;
+  accent: string;
+}
+
+function PhotoGallery({ makeId, modelId, label, body, colors, accent }: PhotoGalleryProps) {
+  const media = getCarMedia(makeId, modelId);
+  const [selected, setSelected] = useState(0);
+
+  return (
+    <div className="car-gallery">
+      <div className="carpage-photo">
+        <CarImage
+          makeId={makeId}
+          modelId={modelId}
+          label={label}
+          body={body}
+          colors={colors}
+          accent={accent}
+          photoIndex={selected}
+        />
+      </div>
+
+      {media.length > 1 && (
+        <div className="carpage-thumbs" aria-label="Photo gallery">
+          {media.map((photo, index) => (
+            <button
+              key={photo}
+              type="button"
+              className={`carpage-thumb ${index === selected ? 'on' : ''}`}
+              onClick={() => setSelected(index)}
+              aria-label={`Show photo ${index + 1}`}
+              aria-pressed={index === selected}
+            >
+              <img src={photo} alt={`${label} photo ${index + 1}`} loading="lazy" decoding="async" />
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 export function CarPage({ entry, favorite, compared, onFavorite, onCompare }: CarPageProps) {
@@ -58,16 +107,15 @@ export function CarPage({ entry, favorite, compared, onFavorite, onCompare }: Ca
       <a className="back" href="#/">← All cars</a>
 
       <div className="carpage-hero">
-        <div className="carpage-photo">
-          <CarImage
-            makeId={make.id}
-            modelId={model.id}
-            label={`${make.name} ${model.name} ${variant.name}`}
-            body={body}
-            colors={colors}
-            accent={fuel}
-          />
-        </div>
+        <PhotoGallery
+          key={variant.id}
+          makeId={make.id}
+          modelId={model.id}
+          label={`${make.name} ${model.name} ${variant.name}`}
+          body={body}
+          colors={colors}
+          accent={fuel}
+        />
         <div className="carpage-head">
           <span className="cp-make">{make.name} · {make.country}</span>
           <h1>{model.name} {trimVariantName(model.name, variant.name)}</h1>

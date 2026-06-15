@@ -52,7 +52,15 @@ export default function App() {
   useEffect(() => { setPage(1); }, [query, filters, sort]);
 
   const results = useMemo(() => sortVariants(searchVariants(query, filters), sort), [query, filters, sort]);
-  const featured = useMemo(() => sortVariants(allVariants, 'power-desc').slice(0, 8), []);
+  const featured = useMemo(() => {
+    const seen = new Set<string>();
+    return sortVariants(allVariants, 'power-desc').filter((entry) => {
+      const key = `${entry.make.id}/${entry.model.id}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    }).slice(0, 8);
+  }, []);
   const saved = useMemo(() => allVariants.filter((e) => favorites.has(e.variant.id)), [favorites]);
 
   const pageCount = Math.max(1, Math.ceil(results.length / PAGE_SIZE));

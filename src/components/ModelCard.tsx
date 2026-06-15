@@ -1,4 +1,5 @@
 import type { CarMake, CarModel } from '../types';
+import { countVariantsForModel } from '../lib/catalog';
 import { makeTheme, fuelColor, primaryBody, priceFrom } from '../lib/theme';
 import { CarImage } from './CarImage';
 import { go, modelHref } from '../lib/useHashRoute';
@@ -10,6 +11,7 @@ interface ModelCardProps {
 
 export function ModelCard({ make, model }: ModelCardProps) {
   const variants = model.generations.flatMap((g) => g.variants);
+  const totalVersions = countVariantsForModel(make.id, model.id);
   const first = model.generations[0];
   const firstVariant = first?.variants[0];
   const colors = makeTheme(make.id);
@@ -22,7 +24,7 @@ export function ModelCard({ make, model }: ModelCardProps) {
     <article className="ccard" onClick={() => go(modelHref(make.id, model.id).slice(1))}>
       <div className="ccard-photo">
         <CarImage makeId={make.id} modelId={model.id} label={`${make.name} ${model.name}`} body={body} colors={colors} accent={fuel} />
-        <span className="count-badge">{variants.length} version{variants.length === 1 ? '' : 's'}</span>
+        <span className="count-badge">{totalVersions} version{totalVersions === 1 ? '' : 's'}</span>
       </div>
       <div className="ccard-body">
         <span className="ccard-make">{make.name}</span>

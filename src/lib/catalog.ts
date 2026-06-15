@@ -221,6 +221,8 @@ const scaleMetric = (value: number | undefined, factor: number, delta = 0) => {
   return Math.max(0, round1(value * factor + delta));
 };
 
+export const normalize = (input: string) => input.toLowerCase().trim();
+
 const buildSearchText = ({ make, model, generation, variant }: FlatVariant) =>
   normalize([
     make.name,
@@ -366,8 +368,6 @@ export const catalogStats = () => {
   return { makes: makes.length, models, generations, variants };
 };
 
-export const normalize = (input: string) => input.toLowerCase().trim();
-
 export const searchVariants = (query: string, filters: Record<string, string>) => {
   const q = normalize(query);
   return allVariants.filter((entry) => {
@@ -388,6 +388,11 @@ export const searchVariants = (query: string, filters: Record<string, string>) =
 export const formatNumber = (value?: number, suffix = '') => {
   if (value === undefined || Number.isNaN(value)) return '—';
   return `${value.toLocaleString()}${suffix}`;
+};
+
+export const trimVariantName = (modelName: string, variantName: string) => {
+  const trimmed = variantName.replace(new RegExp(`^${modelName}\\s+`, 'i'), '').trim();
+  return trimmed.length > 0 ? trimmed : variantName;
 };
 
 export interface Range {

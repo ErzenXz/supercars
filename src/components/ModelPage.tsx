@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { allVariants } from '../lib/catalog';
+import { getVariantsForModel } from '../lib/catalog';
 import { makes } from '../data/catalog';
 import { makeHref } from '../lib/useHashRoute';
 import { CarGrid } from './CarGrid';
@@ -15,7 +15,7 @@ export function ModelPage({ makeId, modelId, isFavorite, onToggleFavorite }: Mod
   const make = makes.find((m) => m.id === makeId);
   const model = make?.models.find((m) => m.id === modelId);
   const entries = useMemo(
-    () => allVariants.filter((e) => e.make.id === makeId && e.model.id === modelId),
+    () => getVariantsForModel(makeId, modelId),
     [makeId, modelId]
   );
 
