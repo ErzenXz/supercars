@@ -1,5 +1,5 @@
 import type { FlatVariant } from '../lib/catalog';
-import { formatNumber } from '../lib/catalog';
+import { formatNumber, trimVariantName } from '../lib/catalog';
 import { makeTheme, fuelColor, primaryBody } from '../lib/theme';
 import { CarImage } from './CarImage';
 
@@ -70,7 +70,7 @@ export function CarPage({ entry, favorite, compared, onFavorite, onCompare }: Ca
         </div>
         <div className="carpage-head">
           <span className="cp-make">{make.name} · {make.country}</span>
-          <h1>{model.name} {variant.name}</h1>
+          <h1>{model.name} {trimVariantName(model.name, variant.name)}</h1>
           <p className="cp-sub">{generation.name} · {generation.years} · {body} · {model.segment}</p>
           <div className="cp-price">{variant.priceBand}</div>
           <p className="cp-desc">{model.description}</p>

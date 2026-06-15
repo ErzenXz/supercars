@@ -15,6 +15,7 @@
     "import:vpic": "tsx scripts/import-vpic.ts"
   },
   "dependencies": {
+    "@radix-ui/react-select": "^2.3.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
   },

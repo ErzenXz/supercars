@@ -1,4 +1,5 @@
 import type { FlatVariant } from '../lib/catalog';
+import { trimVariantName } from '../lib/catalog';
 import { makeTheme, fuelColor, primaryBody } from '../lib/theme';
 import { CarImage } from './CarImage';
 
@@ -39,7 +40,7 @@ export function CarCard({ entry, favorite, onOpen, onFavorite }: CarCardProps) {
       </div>
       <div className="ccard-body">
         <span className="ccard-make">{make.name}</span>
-        <h3 className="ccard-title">{model.name} <span>{variant.name}</span></h3>
+        <h3 className="ccard-title">{model.name} <span>{trimVariantName(model.name, variant.name)}</span></h3>
         <div className="ccard-meta">
           <span>{specs.powerHp} hp</span>
           <span className="sep">·</span>
