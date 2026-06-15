@@ -1,17 +1,14 @@
-import { useMemo } from 'react';
-import { allVariants } from '../lib/catalog';
 import { makes } from '../data/catalog';
-import { CarGrid } from './CarGrid';
+import { allVariants } from '../lib/catalog';
+import { BrandLogo } from './BrandLogo';
+import { ModelCard } from './ModelCard';
 
 interface MakePageProps {
   makeId: string;
-  isFavorite: (id: string) => boolean;
-  onToggleFavorite: (id: string) => void;
 }
 
-export function MakePage({ makeId, isFavorite, onToggleFavorite }: MakePageProps) {
+export function MakePage({ makeId }: MakePageProps) {
   const make = makes.find((m) => m.id === makeId);
-  const entries = useMemo(() => allVariants.filter((e) => e.make.id === makeId), [makeId]);
 
   if (!make) {
     return (
@@ -22,16 +19,25 @@ export function MakePage({ makeId, isFavorite, onToggleFavorite }: MakePageProps
     );
   }
 
+  const versions = allVariants.filter((e) => e.make.id === makeId).length;
+
   return (
     <div className="page-pad">
       <div className="container">
         <a className="back" href="#/brands">← All brands</a>
-        <div className="page-head bare">
-          <h1>{make.name}</h1>
-          <p>{make.country} · {make.models.length} models · {entries.length} versions</p>
+        <div className="make-head">
+          <BrandLogo makeId={make.id} className="make-head-logo" />
+          <div>
+            <h1>{make.name}</h1>
+            <p>{make.country} · {make.models.length} models · {versions} versions</p>
+          </div>
         </div>
       </div>
-      <CarGrid entries={entries} isFavorite={isFavorite} onToggleFavorite={onToggleFavorite} />
+      <div className="grid">
+        {make.models.map((model) => (
+          <ModelCard key={model.id} make={make} model={model} />
+        ))}
+      </div>
     </div>
   );
 }

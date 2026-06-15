@@ -8,6 +8,7 @@ import { Compare } from './components/Compare';
 import { Home } from './components/Home';
 import { Brands } from './components/Brands';
 import { MakePage } from './components/MakePage';
+import { ModelPage } from './components/ModelPage';
 import { allVariants, getVariantById, searchVariants, sortVariants } from './lib/catalog';
 import type { SortKey } from './lib/catalog';
 import { makes } from './data/catalog';
@@ -24,6 +25,19 @@ const initialFilters = {
 };
 
 const PAGE_SIZE = 24;
+
+/** Windowed page list with gaps, e.g. [1, 'gap', 5, 6, 7, 'gap', 29]. */
+function pageWindow(current: number, count: number): (number | string)[] {
+  if (count <= 7) return Array.from({ length: count }, (_, i) => i + 1);
+  const wanted = new Set([1, 2, count - 1, count, current - 1, current, current + 1]);
+  const pages = [...wanted].filter((p) => p >= 1 && p <= count).sort((a, b) => a - b);
+  const out: (number | string)[] = [];
+  pages.forEach((p, i) => {
+    if (i > 0 && p - (pages[i - 1] as number) > 1) out.push(`gap-${i}`);
+    out.push(p);
+  });
+  return out;
+}
 
 export default function App() {
   const route = useHashRoute();
@@ -101,16 +115,20 @@ export default function App() {
             <nav className="pager" aria-label="Pagination">
               <button className="pager-btn" onClick={() => gotoPage(currentPage - 1)} disabled={currentPage === 1}>← Prev</button>
               <div className="pager-nums">
-                {Array.from({ length: pageCount }, (_, i) => i + 1).map((p) => (
-                  <button
-                    key={p}
-                    className={`pager-num ${p === currentPage ? 'on' : ''}`}
-                    onClick={() => gotoPage(p)}
-                    aria-current={p === currentPage}
-                  >
-                    {p}
-                  </button>
-                ))}
+                {pageWindow(currentPage, pageCount).map((p) =>
+                  typeof p === 'string' ? (
+                    <span key={p} className="pager-gap">…</span>
+                  ) : (
+                    <button
+                      key={p}
+                      className={`pager-num ${p === currentPage ? 'on' : ''}`}
+                      onClick={() => gotoPage(p)}
+                      aria-current={p === currentPage}
+                    >
+                      {p}
+                    </button>
+                  )
+                )}
               </div>
               <button className="pager-btn" onClick={() => gotoPage(currentPage + 1)} disabled={currentPage === pageCount}>Next →</button>
             </nav>
@@ -148,8 +166,10 @@ export default function App() {
         onCompare={() => toggleCompare(route.id)}
       />
     );
+  } else if (route.name === 'model') {
+    content = <ModelPage makeId={route.makeId} modelId={route.modelId} isFavorite={isFav} onToggleFavorite={toggleFav} />;
   } else if (route.name === 'make') {
-    content = <MakePage makeId={route.id} isFavorite={isFav} onToggleFavorite={toggleFav} />;
+    content = <MakePage makeId={route.id} />;
   } else if (route.name === 'brands') {
     content = <Brands />;
   } else if (route.name === 'compare') {

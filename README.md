@@ -6,10 +6,11 @@ A clean, **minimalist** Vite + React 19 + TypeScript car catalog. Built on a mak
 
 ## What is included
 
-- **21 makes, 130+ versions** spanning diesel, petrol, hybrid, plug-in hybrid and electric
+- **40+ makes, 680+ versions** spanning diesel, petrol, hybrid, plug-in hybrid and electric — full lineups (e.g. BMW 1/2/3/4/5/7/8 Series, X1–X7, Z4, i4/i5/iX, and M2/M3/M4/M5/M8 as their own models)
 - **Minimal, light, responsive UI** — large real car photos, lots of whitespace, restrained type
-- **Real model photos** from Wikimedia Commons, with a procedural SVG silhouette as fallback
-- **Dedicated car page per version** (lightweight hash routing): click a car → its own page with full specs, dimensions, equipment and buyer notes
+- **Real model photos** from Wikimedia Commons + **brand logos** (Simple Icons) on photo-backed brand cards, with graceful fallbacks
+- **Browse hierarchy**: Brands → Make (model cards) → Model (all variants, e.g. every M4) → Car page with full specs, dimensions, equipment and buyer notes
+- **Paginated browse** (24/page) with windowed page controls
 - Search + filters (make, fuel, body, drive) + **sorting** (power, price, efficiency, newest)
 - **Favorites** saved to `localStorage`, and side-by-side **comparison** of up to three versions with the best value in each row highlighted
 - Strong TypeScript schema in `src/types.ts`
