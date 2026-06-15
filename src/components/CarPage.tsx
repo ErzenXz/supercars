@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import type { CSSProperties } from 'react';
 import type { FlatVariant } from '../lib/catalog';
 import { formatNumber, trimVariantName } from '../lib/catalog';
 import { getCarMedia } from '../lib/media';
@@ -76,6 +77,7 @@ export function CarPage({ entry, favorite, compared, onFavorite, onCompare }: Ca
   const colors = makeTheme(make.id);
   const fuel = fuelColor(s.fuel);
   const body = primaryBody(generation.bodyStyles, variant.name);
+  const vars = { '--g1': colors.a, '--g2': colors.b, '--fuel': fuel } as CSSProperties;
 
   const specTiles: [string, string][] = [
     ['Engine', s.engine],
@@ -103,7 +105,7 @@ export function CarPage({ entry, favorite, compared, onFavorite, onCompare }: Ca
   ];
 
   return (
-    <article className="carpage">
+    <article className="carpage" style={vars}>
       <a className="back" href="#/">← All cars</a>
 
       <div className="carpage-hero">

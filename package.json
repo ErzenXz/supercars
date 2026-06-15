@@ -12,7 +12,8 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview --host 0.0.0.0",
     "typecheck": "tsc --noEmit",
-    "import:vpic": "tsx scripts/import-vpic.ts"
+    "import:vpic": "tsx scripts/import-vpic.ts",
+    "fetch:media": "tsx scripts/fetch-car-media.ts"
   },
   "dependencies": {
     "@radix-ui/react-select": "^2.3.0",

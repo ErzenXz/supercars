@@ -68,7 +68,7 @@ const tokenize = (value: string) =>
     .filter((token) => token.length >= 3);
 
 const scoreItem = (item: MediaItem, tokens: string[]) => {
-  const title = item.title.toLowerCase();
+  const title = (item.title ?? '').toLowerCase();
   const caption = item.caption?.text?.toLowerCase() ?? '';
   let score = 0;
 

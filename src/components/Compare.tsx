@@ -1,5 +1,5 @@
 import type { FlatVariant } from '../lib/catalog';
-import { formatNumber } from '../lib/catalog';
+import { formatNumber, trimVariantName } from '../lib/catalog';
 import { makeTheme, fuelColor, primaryBody } from '../lib/theme';
 import { CarImage } from './CarImage';
 import { carHref } from '../lib/useHashRoute';
@@ -74,7 +74,7 @@ export function Compare({ entries, onRemove }: CompareProps) {
                         />
                       </a>
                       <span className="name">{entry.make.name} {entry.model.name}</span>
-                      <span className="trim">{entry.variant.name}</span>
+                      <span className="trim">{trimVariantName(entry.model.name, entry.variant.name)}</span>
                       <button className="cmp-remove" onClick={() => onRemove(entry.variant.id)}>Remove</button>
                     </th>
                   );

@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import type { FlatVariant } from '../lib/catalog';
 import { trimVariantName } from '../lib/catalog';
 import { makeTheme, fuelColor, primaryBody } from '../lib/theme';
@@ -18,8 +19,10 @@ export function CarCard({ entry, favorite, onOpen, onFavorite }: CarCardProps) {
   const body = primaryBody(generation.bodyStyles, variant.name);
   const range = specs.fuel === 'Electric' && specs.electricRangeKm ? `${specs.electricRangeKm} km` : null;
 
+  const vars = { '--g1': colors.a, '--g2': colors.b, '--fuel': fuel } as CSSProperties;
+
   return (
-    <article className="ccard" onClick={onOpen}>
+    <article className="ccard" style={vars} onClick={onOpen}>
       <div className="ccard-photo">
         <CarImage
           makeId={make.id}
@@ -29,6 +32,9 @@ export function CarCard({ entry, favorite, onOpen, onFavorite }: CarCardProps) {
           colors={colors}
           accent={fuel}
         />
+        <span className="ccard-tag">
+          <span className="fuel-dot" style={{ background: fuel }} /> {specs.fuel}
+        </span>
         <button
           className={`ccard-fav ${favorite ? 'on' : ''}`}
           onClick={(e) => { e.stopPropagation(); onFavorite(); }}
@@ -41,14 +47,13 @@ export function CarCard({ entry, favorite, onOpen, onFavorite }: CarCardProps) {
       <div className="ccard-body">
         <span className="ccard-make">{make.name}</span>
         <h3 className="ccard-title">{model.name} <span>{trimVariantName(model.name, variant.name)}</span></h3>
-        <div className="ccard-meta">
-          <span>{specs.powerHp} hp</span>
-          <span className="sep">·</span>
-          <span><span className="fuel-dot" style={{ background: fuel }} /> {specs.fuel}</span>
-          <span className="sep">·</span>
-          <span>{range ?? specs.drive}</span>
+        <div className="ccard-stats">
+          <span className="stat"><strong>{specs.powerHp}</strong> hp</span>
+          <span className="stat">{range ?? specs.drive}</span>
         </div>
-        <div className="ccard-price">{variant.priceBand}</div>
+        <div className="ccard-foot">
+          <span className="ccard-price">{variant.priceBand}</span>
+        </div>
       </div>
     </article>
   );

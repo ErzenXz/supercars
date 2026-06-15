@@ -1,4 +1,5 @@
 import { makes } from '../data/catalog';
+import { countVariantsForMake } from '../lib/catalog';
 import { makeTheme, fuelColor, primaryBody } from '../lib/theme';
 import { go, makeHref } from '../lib/useHashRoute';
 import { CarImage } from './CarImage';
@@ -14,10 +15,7 @@ export function Brands() {
 
       <div className="brand-grid">
         {makes.map((make) => {
-          const versions = make.models.reduce(
-            (sum, model) => sum + model.generations.reduce((s, g) => s + g.variants.length, 0),
-            0
-          );
+          const versions = countVariantsForMake(make.id);
           const rep = make.models.find((m) => m.generations[0]?.variants[0]) ?? make.models[0];
           const repVariant = rep?.generations[0]?.variants[0];
           const colors = makeTheme(make.id);

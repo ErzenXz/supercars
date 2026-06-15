@@ -6,9 +6,9 @@ A clean, **minimalist** Vite + React 19 + TypeScript car catalog. Built on a mak
 
 ## What is included
 
-- **40+ makes, 680+ versions** spanning diesel, petrol, hybrid, plug-in hybrid and electric — full lineups (e.g. BMW 1/2/3/4/5/7/8 Series, X1–X7, Z4, i4/i5/iX, and M2/M3/M4/M5/M8 as their own models)
+- **40+ makes, 50,000+ generated versions** built from a curated seed catalog, spanning diesel, petrol, hybrid, plug-in hybrid and electric
 - **Minimal, light, responsive UI** — large real car photos, lots of whitespace, restrained type
-- **Real model photos** from Wikimedia Commons + **brand logos** (Simple Icons) on photo-backed brand cards, with graceful fallbacks
+- **Real model photo galleries** from Wikimedia Commons + **brand logos** (Simple Icons) on photo-backed brand cards, with graceful fallbacks
 - **Browse hierarchy**: Brands → Make (model cards) → Model (all variants, e.g. every M4) → Car page with full specs, dimensions, equipment and buyer notes
 - **Paginated browse** (24/page) with windowed page controls
 - Search + filters (make, fuel, body, drive) + **sorting** (power, price, efficiency, newest)
@@ -94,17 +94,18 @@ src/
 scripts/
   import-vpic.ts        public API importer example
   fetch-car-images.ts   regenerates src/data/carImages.ts from Wikimedia
+  fetch-car-media.ts    builds multi-photo galleries in src/data/carMedia.ts
 ```
 
 ## Car images
 
-Model photos in `src/data/carImages.ts` are sourced from **Wikimedia Commons**
-(CC-licensed) and resolved at build time by `scripts/fetch-car-images.ts`. When a
-model has no photo the UI falls back to a procedurally drawn SVG silhouette, so it
-never looks broken. Re-run the fetcher to refresh:
+Model photos in `src/data/carImages.ts` and galleries in `src/data/carMedia.ts`
+are sourced from **Wikimedia Commons** / Wikipedia media listings (CC-licensed).
+When a model has no photo the UI falls back to a procedurally drawn SVG silhouette,
+so it never looks broken. Re-run the gallery fetcher to refresh:
 
 ```bash
-pnpm tsx scripts/fetch-car-images.ts
+pnpm fetch:media
 ```
 
 ## License
