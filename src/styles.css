@@ -397,6 +397,116 @@ h1, h2, h3, p { margin: 0; }
 .foot .container { padding-top: 26px; padding-bottom: 40px; display: flex; flex-wrap: wrap; gap: 8px 18px; justify-content: space-between; }
 .foot a { text-decoration: underline; text-underline-offset: 3px; }
 
+/* ---------- nav active ---------- */
+.topnav a.active { background: var(--bg-soft); color: var(--text); }
+
+/* ---------- home / hero ---------- */
+.page-pad { padding-top: 4px; }
+.page-head.bare { padding-bottom: 22px; }
+.hero {
+  padding: clamp(48px, 9vw, 104px) 0 clamp(34px, 6vw, 60px);
+  border-bottom: 1px solid var(--line);
+}
+.hero h1 {
+  font-size: clamp(40px, 7vw, 74px);
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 1.0;
+}
+.hero p { color: var(--muted); font-size: clamp(16px, 2vw, 19px); margin-top: 16px; max-width: 58ch; }
+.hero-search { display: flex; gap: 10px; margin-top: 28px; max-width: 640px; }
+.hero-search input {
+  flex: 1;
+  height: 52px;
+  padding: 0 18px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--bg-soft);
+  outline: none;
+  font-size: 16px;
+}
+.hero-search input:focus { border-color: var(--accent); background: var(--bg); }
+.hero-search .btn { height: 52px; }
+.hero-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+.stat-row { display: flex; gap: clamp(22px, 5vw, 56px); margin-top: 42px; flex-wrap: wrap; }
+.stat-row div strong { display: block; font-size: clamp(26px, 4vw, 40px); font-weight: 600; letter-spacing: -0.03em; }
+.stat-row div span { color: var(--muted); font-size: 13px; }
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: clamp(40px, 6vw, 62px) 0 20px;
+}
+.section-head h2 { font-size: clamp(22px, 3vw, 30px); font-weight: 600; letter-spacing: -0.03em; }
+.section-head a { color: var(--muted); font-size: 14px; font-weight: 500; }
+.section-head a:hover { color: var(--text); }
+
+.brands-strip { padding-bottom: 56px; }
+.chip-row { display: flex; flex-wrap: wrap; gap: 9px; }
+.brand-chip {
+  padding: 9px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: var(--bg);
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.15s ease, transform 0.12s ease;
+}
+.brand-chip:hover { background: var(--bg-soft); transform: translateY(-1px); }
+
+/* ---------- brands grid ---------- */
+.brand-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 18px;
+  padding-bottom: 72px;
+}
+.brand-card {
+  text-align: left;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+.brand-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: var(--line-strong); }
+.brand-photo { aspect-ratio: 16 / 10; display: grid; place-items: center; overflow: hidden; }
+.brand-photo img { width: 100%; height: 100%; object-fit: cover; }
+.brand-info { padding: 14px 16px 16px; }
+.brand-info h3 { font-size: 17px; font-weight: 600; }
+.brand-info span { display: block; margin-top: 4px; color: var(--muted); font-size: 13px; }
+
+/* ---------- pager ---------- */
+.pager {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 6px clamp(16px, 4vw, 28px) 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.pager-btn, .pager-num {
+  min-width: 40px;
+  height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--bg);
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.pager-nums { display: flex; gap: 6px; flex-wrap: wrap; }
+.pager-num { padding: 0; }
+.pager-btn:hover:not(:disabled), .pager-num:hover { background: var(--bg-soft); }
+.pager-btn:disabled { opacity: 0.4; cursor: default; }
+.pager-num.on { background: var(--accent); color: var(--accent-contrast); border-color: var(--accent); }
+
 /* ---------- responsive ---------- */
 @media (max-width: 820px) {
   .carpage-hero { grid-template-columns: 1fr; }
