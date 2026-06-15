@@ -6,3 +6,4 @@ dist
 public/imports/*.json
 .vercel
 *.log
+*.tsbuildinfo
